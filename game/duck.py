@@ -39,7 +39,7 @@ class Duck(object):
         x, y = self.position
 
         # Update position
-        self.position = (x + self.dx), (y + self.dy)
+        self.position = (x + self.dx/2), (y + self.dy/2)
         if not self.isDead or not self.isFinished:
             self.changeDirection()
 
