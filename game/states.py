@@ -1,9 +1,12 @@
 import os, time
 import pygame
 from .registry import adjpos, adjrect, adjwidth, adjheight
+from . import registry
 from .gun import Gun
 from .duck import Duck
+from .hand_model import HandGestureModel
 
+model=HandGestureModel(model_path="./game/outfile.task",dim=(800,500))
 DOG_POSITION = adjpos (250, 350)
 DOG_FRAME = adjpos (122, 110)
 DOG_REPORT_POSITION = adjpos (450, 325)
@@ -32,9 +35,7 @@ NOTICE_RECT = adjrect (0, 86, 128, 63)
 NOTICE_WIDTH = adjwidth (128)
 NOTICE_LINE_1_HEIGHT = adjheight (128)
 NOTICE_LINE_2_HEIGHT = adjwidth (150)
-
 registry = None
-
 class BaseState(object):
     def __init__(self):
         global registry
@@ -190,17 +191,19 @@ class PlayState(BaseState):
         self.dogdy = 5
 
     def execute(self, event):
-        if event.type == pygame.MOUSEMOTION:
-            self.gun.moveCrossHairs(event.pos)
-        elif event.type == pygame.MOUSEBUTTONDOWN:
+        global model;
+        model.get_pos()
+        if model.is_click():
             hasFired = self.gun.shoot()
             for duck in self.ducks:
-                if hasFired and duck.isShot(event.pos):
+                if hasFired and duck.isShot(model.get_pos()):
                     self.registry.set('score', self.registry.get('score') + 10)
                     self.hitDucks[self.hitDuckIndex] = True
                     self.hitDuckIndex += 1
                 elif not duck.isDead and self.gun.rounds <= 0:
                      duck.flyOff = True
+        else:
+            self.gun.moveCrossHairs(model.get_pos())
 
     def update(self):
         timer = int(time.time())
@@ -339,8 +342,10 @@ class GameOverState(BaseState):
         self.state = None
 
     def execute(self, event):
+        global model
+        model.get_pos()
         # Click to restart
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if model.is_click():
             self.registry.set('score', 0)
             self.registry.set('round', 1)
             self.state = RoundStartState()

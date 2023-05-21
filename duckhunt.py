@@ -2,7 +2,6 @@ import os, sys
 import pygame
 import pygame.transform
 from game.registry import adjpos, adjrect, adjwidth, adjheight
-
 # Game parameters
 SCREEN_WIDTH, SCREEN_HEIGHT = adjpos (800, 500)
 TITLE = "Cynaptics Club : Duck Hunt"
@@ -13,7 +12,9 @@ BG_COLOR = 255, 255, 255
 pygame.mixer.pre_init(44100, -16, 2, 1024)
 pygame.init()
 pygame.display.set_caption(TITLE)
-pygame.mouse.set_visible(False)
+# pygame.mouse.set_visible(False)
+CUSTOM_EVENT = pygame.USEREVENT + 1
+pygame.time.set_timer(CUSTOM_EVENT, 80)##change this accarding to convinience
 
 import game.driver
 
